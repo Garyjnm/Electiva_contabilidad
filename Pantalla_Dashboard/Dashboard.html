@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <nav class="nav-menu">
+            <h2>Mi Panel de Control</h2>
+            <a href="index.html" class="btn-nav">Ir a Captura de Datos</a>
+        </nav>
+
+        <section class="insights-section">
+            <h3>Insights Estratégicos y Toma de Decisiones</h3>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h4>Total Ingresos (Ventas/Servicios)</h4>
+                    <p id="kpi-ingresos">C$ 0.00</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Total Gastos/Compras</h4>
+                    <p id="kpi-gastos">C$ 0.00</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Balance Neto</h4>
+                    <p id="kpi-balance">C$ 0.00</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Transacciones Registradas</h4>
+                    <p id="kpi-transacciones">0</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="charts-section">
+            <div class="chart-container">
+                <h4>Distribución de Transacciones</h4>
+                <canvas id="chartTransacciones"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4>Métodos de Pago Utilizados</h4>
+                <canvas id="chartMetodoPago"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
