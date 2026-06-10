@@ -1,54 +1,572 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financiero</title>
-    <link rel="stylesheet" href="dashboard.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Financiero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg-page:      #13131A;
+  --bg-surface:   #1C1C26;
+  --bg-deep:      #13131A;
+  --border:       rgba(255,255,255,0.08);
+  --border-hover: rgba(255,255,255,0.15);
+  --border-inner: rgba(255,255,255,0.05);
+  --green:   #43E97B;
+  --red:     #FF6584;
+  --purple:  #9B95FF;
+  --amber:   #F9CA24;
+  --teal:    #2EB88A;
+  --orange:  #E8834A;
+  --blue:    #5B8FD4;
+  --gray:    #888898;
+  --txt1: #E8E8F0;
+  --txt2: #9191A8;
+  --txt3: #6A6A82;
+  --txt4: #5A5A72;
+  --txt5: #44445A;
+  --radius: 10px;
+  --radius-sm: 7px;
+  --font: 'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg-page);
+  color: var(--txt1);
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ── CONTENEDOR ── */
+.db {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── NAVEGACIÓN ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 24px;
+}
+.nav-l { display: flex; align-items: center; gap: 8px; }
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #6C63FF;
+  flex-shrink: 0;
+}
+.nav h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--txt1);
+  letter-spacing: -0.01em;
+}
+.nav a {
+  font-size: 12px;
+  color: #6C63FF;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s;
+}
+.nav a:hover { color: var(--purple); }
+
+/* ── SECTION LABEL ── */
+.sec-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+/* ── KPI GRID ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+/* ── TARJETA KPI ── */
+.kc {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: border-color 0.2s, transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+}
+.kc:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+
+/* barra top */
+.kc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 0;
+}
+.kc.green::before  { background: var(--green); }
+.kc.red::before    { background: var(--red); }
+.kc.purple::before { background: var(--purple); }
+.kc.amber::before  { background: var(--amber); }
+
+/* circulo decorativo de fondo */
+.kc::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  opacity: 0.07;
+  transition: opacity 0.2s;
+}
+.kc.green::after  { background: var(--green); }
+.kc.red::after    { background: var(--red); }
+.kc.purple::after { background: var(--purple); }
+.kc.amber::after  { background: var(--amber); }
+.kc:hover::after  { opacity: 0.15; }
+
+.kc-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  margin-bottom: 12px;
+  position: relative; z-index: 1;
+}
+.kc.green  .kc-icon { background: rgba(67,233,123,0.12);  color: var(--green); }
+.kc.red    .kc-icon { background: rgba(255,101,132,0.12); color: var(--red); }
+.kc.purple .kc-icon { background: rgba(155,149,255,0.12); color: var(--purple); }
+.kc.amber  .kc-icon { background: rgba(249,202,36,0.12);  color: var(--amber); }
+
+.kc h4 {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--txt4);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 5px;
+  position: relative; z-index: 1;
+}
+.kc p {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  position: relative; z-index: 1;
+}
+.kc.green  p { color: var(--green); }
+.kc.red    p { color: var(--red); }
+.kc.purple p { color: var(--purple); }
+.kc.amber  p { color: var(--amber); }
+
+.kc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-top: 6px;
+  position: relative; z-index: 1;
+}
+.kc.green  .kc-tag { background: rgba(67,233,123,0.12);  color: var(--green); }
+.kc.red    .kc-tag { background: rgba(255,101,132,0.12); color: var(--red); }
+.kc.purple .kc-tag { background: rgba(155,149,255,0.12); color: var(--purple); }
+.kc.amber  .kc-tag { background: rgba(249,202,36,0.12);  color: var(--amber); }
+
+/* ── FILA DE GRÁFICOS ── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 14px;
+}
+
+/* ── TARJETA DE GRÁFICO ── */
+.card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border-hover); }
+
+.card-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid var(--border-inner);
+}
+.card-hdr h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.card-hdr span { font-size: 11px; color: var(--txt4); }
+
+/* ── LEYENDA ── */
+.leg { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.leg span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--txt3); }
+.lsq { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── DONUT LAYOUT ── */
+.donut-layout {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.donut-col-left { flex: 0 0 170px; position: relative; }
+.donut-wrap { position: relative; height: 170px; }
+
+/* texto central del donut */
+.donut-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.donut-center-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--txt1);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.donut-center-lbl {
+  font-size: 10px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+
+/* columna derecha del donut */
+.donut-col-right { flex: 1; display: flex; flex-direction: column; }
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border-inner);
+}
+.stat-row:last-child { border-bottom: none; }
+
+.stat-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-right: 8px; }
+.stat-name { font-size: 12px; color: var(--txt2); flex: 1; }
+
+.mbar-track {
+  width: 50px; height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+.mbar-fill { height: 3px; border-radius: 2px; }
+
+.stat-r { text-align: right; }
+.stat-pct { font-size: 13px; font-weight: 700; }
+.stat-ops { font-size: 10px; color: var(--txt4); margin-top: 1px; }
+
+/* ── TARJETAS RESUMEN DONUT ── */
+.donut-summary {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border-inner);
+}
+.sum-card {
+  flex: 1;
+  background: var(--bg-deep);
+  border: 0.5px solid var(--border-inner);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+}
+.sum-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--txt4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sum-val { font-size: 13px; font-weight: 700; margin-top: 3px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .donut-layout { flex-direction: column; }
+  .donut-col-left { flex: none; width: 100%; }
+}
+@media (max-width: 640px) {
+  body { padding: 12px 10px; }
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 20px; }
+  .kc p { font-size: 15px; }
+  .nav { flex-direction: column; gap: 8px; text-align: center; }
+  .donut-summary { flex-wrap: wrap; }
+  .sum-card { min-width: calc(50% - 5px); }
+}
+</style>
 </head>
 <body>
 
-    <div class="dashboard-container">
-        <nav class="nav-menu">
-            <h2>Mi Panel de Control</h2>
-            <a href="index.html" class="btn-nav">Ir a Captura de Datos</a>
-        </nav>
+<div class="db">
 
-        <section class="insights-section">
-            <h3>Insights Estratégicos y Toma de Decisiones</h3>
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <h4>Total Ingresos (Ventas/Servicios)</h4>
-                    <p id="kpi-ingresos">C$ 0.00</p>
-                </div>
-                <div class="kpi-card">
-                    <h4>Total Gastos/Compras</h4>
-                    <p id="kpi-gastos">C$ 0.00</p>
-                </div>
-                <div class="kpi-card">
-                    <h4>Balance Neto</h4>
-                    <p id="kpi-balance">C$ 0.00</p>
-                </div>
-                <div class="kpi-card">
-                    <h4>Transacciones Registradas</h4>
-                    <p id="kpi-transacciones">0</p>
-                </div>
-            </div>
-        </section>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-l">
+      <span class="nav-dot"></span>
+      <h2>Mi Panel de Control</h2>
+    </div>
+    <a href="captura.html">
+      <i class="ti ti-external-link" aria-hidden="true" style="font-size:13px"></i>
+      Ir a Captura de Datos
+    </a>
+  </nav>
 
-        <section class="charts-section">
-            <div class="chart-container">
-                <h4>Distribución de Transacciones</h4>
-                <canvas id="chartTransacciones"></canvas>
-            </div>
-            <div class="chart-container">
-                <h4>Métodos de Pago Utilizados</h4>
-                <canvas id="chartMetodoPago"></canvas>
-            </div>
-        </section>
+  <!-- SECTION LABEL -->
+  <p class="sec-lbl">Insights Estratégicos y Toma de Decisiones</p>
+
+  <!-- KPI GRID -->
+  <div class="kpi-grid">
+
+    <div class="kc green">
+      <div class="kc-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
+      <h4>Total Ingresos (Ventas/Servicios)</h4>
+      <p>C$ 353,850.00</p>
+      <span class="kc-tag">↑ Ventas / Servicios</span>
     </div>
 
-    <script src="dashboard.js"></script>
+    <div class="kc red">
+      <div class="kc-icon"><i class="ti ti-trending-down" aria-hidden="true"></i></div>
+      <h4>Total Gastos/Compras</h4>
+      <p>C$ 52,047,630.00</p>
+      <span class="kc-tag">↑ Compras</span>
+    </div>
+
+    <div class="kc purple">
+      <div class="kc-icon"><i class="ti ti-wallet" aria-hidden="true"></i></div>
+      <h4>Balance Neto</h4>
+      <p>C$ -51,693,780.00</p>
+      <span class="kc-tag">Déficit activo</span>
+    </div>
+
+    <div class="kc amber">
+      <div class="kc-icon"><i class="ti ti-receipt" aria-hidden="true"></i></div>
+      <h4>Transacciones Registradas</h4>
+      <p>12</p>
+      <span class="kc-tag">Registradas</span>
+    </div>
+
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="charts-row">
+
+    <!-- BARRAS -->
+    <div class="card">
+      <div class="card-hdr">
+        <h4>Distribución de Transacciones</h4>
+        <span>12 operaciones en total</span>
+      </div>
+      <div class="leg">
+        <span><span class="lsq" style="background:#FF6584"></span>Gastos</span>
+        <span><span class="lsq" style="background:#E8834A"></span>Servicio</span>
+        <span><span class="lsq" style="background:#5B8FD4"></span>Compra</span>
+        <span><span class="lsq" style="background:#2EB88A"></span>Venta</span>
+        <span><span class="lsq" style="background:#888898"></span>Sin definir</span>
+      </div>
+      <div style="position:relative;height:190px">
+        <canvas id="barChart" role="img" aria-label="Distribución de transacciones por tipo">Gastos:6, Servicio:2, Compra:1, Venta:2, Sin definir:1.</canvas>
+      </div>
+    </div>
+
+    <!-- DONUT -->
+    <div class="card">
+      <div class="card-hdr">
+        <h4>Métodos de Pago Utilizados</h4>
+        <span>3 métodos activos</span>
+      </div>
+
+      <div class="donut-layout">
+
+        <div class="donut-col-left">
+          <div class="donut-wrap">
+            <canvas id="donutChart" role="img" aria-label="Métodos de pago utilizados">Proveedores 50%, Bancos 33%, Sin definir 17%.</canvas>
+            <div class="donut-center">
+              <div class="donut-center-val">12</div>
+              <div class="donut-center-lbl">operaciones</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="donut-col-right">
+          <div class="stat-row">
+            <span class="stat-dot" style="background:#6C63FF"></span>
+            <span class="stat-name">Proveedores</span>
+            <div class="mbar-track"><div class="mbar-fill" style="width:50%;background:#6C63FF"></div></div>
+            <div class="stat-r">
+              <div class="stat-pct" style="color:#9B95FF">50%</div>
+              <div class="stat-ops">6 ops</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-dot" style="background:#2EB88A"></span>
+            <span class="stat-name">Bancos</span>
+            <div class="mbar-track"><div class="mbar-fill" style="width:33%;background:#2EB88A"></div></div>
+            <div class="stat-r">
+              <div class="stat-pct" style="color:#2EB88A">33%</div>
+              <div class="stat-ops">4 ops</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-dot" style="background:#888898"></span>
+            <span class="stat-name">Sin definir</span>
+            <div class="mbar-track"><div class="mbar-fill" style="width:17%;background:#888898"></div></div>
+            <div class="stat-r">
+              <div class="stat-pct" style="color:#888898">17%</div>
+              <div class="stat-ops">2 ops</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="donut-summary">
+        <div class="sum-card">
+          <div class="sum-lbl">Mayor volumen</div>
+          <div class="sum-val" style="color:#9B95FF">Proveedores</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-lbl">Promedio / op.</div>
+          <div class="sum-val" style="color:#F9CA24">C$ 4,337,303</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-lbl">Sin clasificar</div>
+          <div class="sum-val" style="color:#FF6584">2 ops</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const g = 'rgba(255,255,255,0.05)';
+const tk = '#4A4A62';
+
+/* ── GRÁFICO DE BARRAS ── */
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Gastos', 'Servicio', 'Compra', 'Venta', 'Sin definir'],
+    datasets: [{
+      data: [6, 2, 1, 2, 1],
+      backgroundColor: ['#FF6584', '#E8834A', '#5B8FD4', '#2EB88A', '#888898'],
+      borderRadius: 6,
+      borderSkipped: false,
+      barPercentage: 0.55,
+      categoryPercentage: 0.7
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1E1E2E',
+        titleColor: '#E0E0F0',
+        bodyColor: '#9191A8',
+        borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: { label: c => `  ${c.parsed.y} operaciones` }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: g, drawBorder: false },
+        ticks: { color: tk, font: { size: 12, family: 'Inter' } },
+        border: { display: false }
+      },
+      y: {
+        grid: { color: g, drawBorder: false },
+        ticks: { color: tk, font: { size: 12, family: 'Inter' }, stepSize: 1 },
+        border: { display: false },
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+/* ── GRÁFICO DONUT ── */
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Proveedores', 'Bancos', 'Sin definir'],
+    datasets: [{
+      data: [50, 33, 17],
+      backgroundColor: ['#6C63FF', '#2EB88A', '#888898'],
+      borderWidth: 3,
+      borderColor: '#1C1C26',
+      hoverOffset: 8,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '72%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1E1E2E',
+        titleColor: '#E0E0F0',
+        bodyColor: '#9191A8',
+        borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: c => `  ${c.parsed}%  ·  ${[6, 4, 2][c.dataIndex]} operaciones`
+        }
+      }
+    }
+  }
+});
+</script>
+
 </body>
 </html>

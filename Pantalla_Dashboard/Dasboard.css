@@ -1,98 +1,405 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ============================================================
+   PANEL DE CONTROL v3 — Gráficos separados + Donut enriquecido
+   Cambios vs v2:
+     · margin-bottom:28px en .kpi-grid → separa KPIs de gráficos
+     · Donut rediseñado: layout horizontal (donut + tabla lateral)
+     · Tarjetas de resumen bajo el donut (mayor volumen, promedio, sin clasificar)
+     · Tooltip del donut muestra % y número de operaciones
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+/* ── TOKENS ─────────────────────────────────────────────────────── */
+:root {
+  --bg-page:      #13131A;
+  --bg-surface:   #1C1C26;
+  --bg-deep:      #13131A;   /* fondo de las sub-tarjetas internas */
+  --border:       rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --border-inner: rgba(255, 255, 255, 0.05);
+
+  --green:   #43E97B;
+  --red:     #FF6584;
+  --purple:  #9B95FF;
+  --amber:   #F9CA24;
+  --teal:    #2EB88A;
+  --orange:  #E8834A;
+  --blue:    #5B8FD4;
+  --gray:    #888898;
+
+  --txt1: #E8E8F0;
+  --txt2: #9191A8;
+  --txt3: #6A6A82;
+  --txt4: #5A5A72;
+  --txt5: #44445A;
+
+  --radius: 10px;
+  --radius-sm: 7px;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* ── RESET & BASE ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
 body {
-    background-color: #f4f7f6;
-    color: #2c3e50;
-    padding: 20px;
+  font-family: var(--font);
+  background: var(--bg-page);
+  color: var(--txt1);
+  padding: 18px;
+  min-height: 100vh;
 }
 
+/* ── CONTENEDOR ──────────────────────────────────────────────────── */
 .dashboard-container {
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;                    /* el espaciado lo maneja margin-bottom en cada bloque */
 }
 
+/* ── NAVEGACIÓN ──────────────────────────────────────────────────── */
 .nav-menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 16px;
+  margin-bottom: 22px;       /* separación nav → KPIs */
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-brand::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #6C63FF;
+  flex-shrink: 0;
+}
+
+.nav-menu h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt1);
+  letter-spacing: -0.01em;
 }
 
 .btn-nav {
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6C63FF;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.btn-nav:hover { color: var(--purple); }
+
+/* ── ETIQUETA DE SECCIÓN ─────────────────────────────────────────── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
 }
 
-.btn-nav:hover {
-    background-color: #2980b9;
-}
-
-.insights-section h3 {
-    margin-bottom: 15px;
-    color: #34495e;
-    border-bottom: 2px solid #3498db;
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
+/* ── KPI GRID ────────────────────────────────────────────────────── */
 .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 28px;       /* ← CLAVE: separa las tarjetas de los gráficos */
 }
 
+/* ── TARJETA KPI ─────────────────────────────────────────────────── */
 .kpi-card {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    text-align: center;
-    border-top: 4px solid #3498db;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
 }
+.kpi-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+.kpi-card::before {               /* barra de color superior */
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 0;
+}
+.kpi-card--green::before  { background: var(--green); }
+.kpi-card--red::before    { background: var(--red); }
+.kpi-card--purple::before { background: var(--purple); }
+.kpi-card--amber::before  { background: var(--amber); }
 
 .kpi-card h4 {
-    font-size: 0.9rem;
-    color: #7f8c8d;
-    margin-bottom: 10px;
-    text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--txt4);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 6px;
 }
 
 .kpi-card p {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #2c3e50;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
+.kpi-card--green  p { color: var(--green); }
+.kpi-card--red    p { color: var(--red); }
+.kpi-card--purple p { color: var(--purple); }
+.kpi-card--amber  p { color: var(--amber); }
 
+.kpi-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+.kpi-tag--green  { background: rgba(67,  233, 123, 0.12); color: var(--green); }
+.kpi-tag--red    { background: rgba(255, 101, 132, 0.12); color: var(--red); }
+.kpi-tag--purple { background: rgba(155, 149, 255, 0.12); color: var(--purple); }
+.kpi-tag--amber  { background: rgba(249, 202,  36, 0.12); color: var(--amber); }
+
+/* ── FILA DE GRÁFICOS ────────────────────────────────────────────── */
 .charts-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 14px;
 }
 
-.chart-container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+/* ── TARJETA DE GRÁFICO ──────────────────────────────────────────── */
+.chart-card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: border-color 0.2s;
+}
+.chart-card:hover { border-color: var(--border-hover); }
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  padding-bottom: 11px;
+  border-bottom: 0.5px solid var(--border-inner);
+}
+.chart-header h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.chart-header span {
+  font-size: 11px;
+  color: var(--txt4);
 }
 
-.chart-container h4 {
-    margin-bottom: 15px;
-    text-align: center;
-    color: #34495e;
+/* Leyenda inline */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--txt3);
+}
+.legend-sq {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Canvas wrapper — barras */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 170px;
+}
+
+/* ── DONUT — layout enriquecido ──────────────────────────────────── */
+
+/* Contenedor horizontal: donut izquierda, tabla derecha */
+.donut-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Columna izquierda: solo el canvas */
+.donut-canvas-col {
+  flex: 0 0 180px;
+  position: relative;
+}
+
+/* Canvas wrapper — donut */
+.donut-wrap {
+  position: relative;
+  height: 170px;
+}
+
+/* Texto flotante en el centro del donut */
+.donut-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.donut-center-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--txt1);
+  line-height: 1;
+}
+.donut-center-label {
+  font-size: 10px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+
+/* Columna derecha: filas de categoría */
+.donut-stats-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+  align-self: center;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border-inner);
+}
+.stat-row:last-child { border-bottom: none; }
+
+.stat-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.stat-name {
+  font-size: 12px;
+  color: var(--txt2);
+}
+
+/* Mini barra de progreso entre nombre y porcentaje */
+.mini-bar-track {
+  width: 52px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+.mini-bar-fill {
+  height: 3px;
+  border-radius: 2px;
+  /* width e background se definen inline por categoría */
+}
+
+.stat-right { text-align: right; }
+.stat-pct {
+  font-size: 13px;
+  font-weight: 700;
+  /* color inline por categoría */
+}
+.stat-ops {
+  font-size: 10px;
+  color: var(--txt4);
+  margin-top: 1px;
+}
+
+/* ── TARJETAS DE RESUMEN BAJO EL DONUT ───────────────────────────── */
+.donut-summary {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border-inner);
+}
+
+.summary-card {
+  flex: 1;
+  background: var(--bg-deep);
+  border: 0.5px solid var(--border-inner);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+}
+.summary-card .s-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--txt4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.summary-card .s-value {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 3px;
+  /* color inline */
+}
+
+/* ── COLORES DE REFERENCIA para JS ───────────────────────────────── */
+/*
+  Barras:     Gastos #FF6584 · Servicio #E8834A · Compra #5B8FD4 · Venta #2EB88A · Sin definir #888898
+  Donut:      Proveedores #6C63FF · Bancos #2EB88A · Sin definir #888898
+  Grid/ticks: rgba(255,255,255,0.05) / #4A4A62
+  Tooltip bg: #1E1E2E   title: #E0E0F0   body: #9191A8   border: rgba(255,255,255,0.08)
+*/
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .charts-section { grid-template-columns: 1fr; }
+  .donut-layout   { flex-direction: column; }
+  .donut-canvas-col { flex: none; width: 100%; }
+}
+
+@media (max-width: 640px) {
+  body { padding: 12px 10px; }
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 20px;
+  }
+  .kpi-card p { font-size: 15px; }
+  .nav-menu { flex-direction: column; gap: 8px; text-align: center; }
+  .donut-summary { flex-direction: column; }
 }
