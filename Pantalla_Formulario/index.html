@@ -4,111 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Captura de Transacciones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="form-container">
-        <h2>Registro de Transacciones</h2>
-        <form id="registroForm">
-            
-            <div class="form-grid">
-                <div class="input-group">
-                    <label for="razonSocial">Razón Social</label>
-                    <input type="text" id="razonSocial" name="Razón Social" required>
-                </div>
-                <div class="input-group">
-                    <label for="ruc">Número RUC</label>
-                    <input type="text" id="ruc" name="Número RUC">
-                </div>
-
-                <div class="input-group">
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" name="Fecha" required>
-                </div>
-                <div class="input-group">
-                    <label for="asiento">Asiento</label>
-                    <input type="number" id="asiento" name="Asiento" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="transaccion">Transacción</label>
-                    <select id="transaccion" name="Transacción" required>
-                        <option value="">Seleccione...</option>
-                        <option value="Gastos">Gastos</option>
-                        <option value="Servicio">Servicio</option>
-                        <option value="Compra">Compra</option>
-                        <option value="Venta">Venta</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="tipoOperacion">Tipo de Operación</label>
-                    <input type="text" id="tipoOperacion" name="Tipo de Operación" placeholder="Ej. Ventas, Financieros..." required>
-                </div>
-                <div class="input-group">
-                    <label for="tipoTransaccion">Tipo de Transacción</label>
-                    <select id="tipoTransaccion" name="Tipo de Transacción" required>
-                        <option value="">Seleccione...</option>
-                        <option value="Crédito">Crédito</option>
-                        <option value="Contado">Contado</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="impuestos">Impuestos</label>
-                    <select id="impuestos" name="Impuestos">
-                        <option value="No">No</option>
-                        <option value="Si">Si</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="monto">Monto (C$)</label>
-                    <input type="number" id="monto" name="Monto" step="0.01" required>
-                </div>
-                <div class="input-group">
-                    <label for="ivaSN">IVA - SI/NO</label>
-                    <select id="ivaSN" name="IVA - SI/NO">
-                        <option value="No">No</option>
-                        <option value="Si">Si</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="irSN">IR - SI/NO</label>
-                    <select id="irSN" name="IR - SI/NO">
-                        <option value="No">No</option>
-                        <option value="Si">Si</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="iva">Iva (C$)</label>
-                    <input type="number" id="iva" name="Iva" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="ir">Ir (C$)</label>
-                    <input type="number" id="ir" name="Ir" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="montoTotal">Monto Total (C$)</label>
-                    <input type="number" id="montoTotal" name="Monto Total" step="0.01" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="conQueSePago">¿Con qué se pagó?</label>
-                    <select id="conQueSePago" name="Con que se Pagó?">
-                        <option value="">Seleccione...</option>
-                        <option value="Proveedores">Proveedores</option>
-                        <option value="Bancos">Bancos</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="costo">Costo (C$)</label>
-                    <input type="number" id="costo" name="Costo" step="0.01">
-                </div>
+    <div class="db form-wrapper">
+        
+        <nav class="nav">
+            <div class="nav-l">
+                <span class="nav-dot"></span>
+                <h2>Captura de Transacciones</h2>
             </div>
+            <a href="../Pantalla_Dashboard/Dashboard.html" class="btn-nav">
+                <i class="ti ti-chart-pie" aria-hidden="true" style="font-size:16px"></i>
+                Ir al Dashboard
+            </a>
+        </nav>
 
-            <button type="submit" id="btnGuardar">Guardar Transacción</button>
-            <p id="mensaje" class="mensaje"></p>
-        </form>
+        <p class="sec-lbl">Ingreso de nuevos registros</p>
+
+        <div class="form-container">
+            <form id="registroForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="razonSocial">Razón Social</label>
+                        <input type="text" id="razonSocial" name="Razón Social" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="ruc">Número RUC</label>
+                        <input type="text" id="ruc" name="Número RUC">
+                    </div>
+                    <div class="input-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" name="Fecha" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="asiento">Asiento</label>
+                        <input type="number" id="asiento" name="Asiento" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="transaccion">Transacción</label>
+                        <select id="transaccion" name="Transacción" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Gastos">Gastos</option>
+                            <option value="Servicio">Servicio</option>
+                            <option value="Compra">Compra</option>
+                            <option value="Venta">Venta</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tipoOperacion">Tipo de Operación</label>
+                        <input type="text" id="tipoOperacion" name="Tipo de Operación" placeholder="Ej. Ventas, Financieros..." required>
+                    </div>
+                    <div class="input-group">
+                        <label for="tipoTransaccion">Tipo de Transacción</label>
+                        <select id="tipoTransaccion" name="Tipo de Transacción" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Crédito">Crédito</option>
+                            <option value="Contado">Contado</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="impuestos">Impuestos</label>
+                        <select id="impuestos" name="Impuestos">
+                            <option value="No">No</option>
+                            <option value="Si">Si</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="monto">Monto (C$)</label>
+                        <input type="number" id="monto" name="Monto" step="0.01" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="ivaSN">IVA - SI/NO</label>
+                        <select id="ivaSN" name="IVA - SI/NO">
+                            <option value="No">No</option>
+                            <option value="Si">Si</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="irSN">IR - SI/NO</label>
+                        <select id="irSN" name="IR - SI/NO">
+                            <option value="No">No</option>
+                            <option value="Si">Si</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="iva">Iva (C$)</label>
+                        <input type="number" id="iva" name="Iva" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="ir">Ir (C$)</label>
+                        <input type="number" id="ir" name="Ir" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="montoTotal">Monto Total (C$)</label>
+                        <input type="number" id="montoTotal" name="Monto Total" step="0.01" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="conQueSePago">¿Con qué se pagó?</label>
+                        <select id="conQueSePago" name="Con que se Pagó?">
+                            <option value="">Seleccione...</option>
+                            <option value="Proveedores">Proveedores</option>
+                            <option value="Bancos">Bancos</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="costo">Costo (C$)</label>
+                        <input type="number" id="costo" name="Costo" step="0.01">
+                    </div>
+                </div>
+
+                <button type="submit" id="btnGuardar">
+                    <i class="ti ti-device-floppy"></i> Guardar Transacción
+                </button>
+                <p id="mensaje" class="mensaje"></p>
+            </form>
+        </div>
     </div>
 
     <script src="script.js"></script>
