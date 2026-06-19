@@ -1,5 +1,5 @@
 // REEMPLAZA ESTA URL CON LA QUE TE DIO GOOGLE APPS SCRIPT
-const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxcvVI9t-vJ1lWSYdpH1MZipbICY3S2WC0Qxat7mm9v65lzqv6F2x5GPvu-rw5TmtK91g/exec";
+const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxcvVI9t-vJ1lWSYdpH1MZipbICY3S2WC0Qxat7mm9v65lzqv6F2x5GPvu-rw5TmtK91g/exec";//actualizando
 
 // Paleta de colores exacta de tu diseño CSS
 const COLORES_BARRAS = {
